@@ -1,8 +1,8 @@
 ﻿using Fleck;
-using helloworld.Services;
+using chatty.Services;
 using lib;
 
-namespace helloworld.ClientEvents;
+namespace chatty.ClientEvents;
 
 public class ClientWantsToSignInDto : BaseDto
 {

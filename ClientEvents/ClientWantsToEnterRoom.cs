@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using Fleck;
-using helloworld.core;
-using helloworld.Infrastructure;
-using helloworld.Services;
+using chatty.core;
+using chatty.Infrastructure;
+using chatty.Services;
 using lib;
 
-namespace helloworld.ClientEvents;
+namespace chatty.ClientEvents;
 
 public class ClientWantsToEnterRoomDto : BaseDto
 {
@@ -18,16 +18,17 @@ public class ClientWantsToEnterRoom(MessageService messageService) : BaseEventHa
     {
         StateService.AddToRoom(socket, dto.RoomId);
         
-        await socket.Send(JsonSerializer.Serialize(new ServerAddsClientToRoomDto()
+        await socket.Send(JsonSerializer.Serialize(new ServerAddsClientToRoom()
         {
-            Messages = await messageService.GetRecentMessages(dto.RoomId)   
+            Messages = await messageService.GetRecentMessages(dto.RoomId),
         }));
     }
 }
 
-public class ServerAddsClientToRoomDto : BaseDto
+public class ServerAddsClientToRoom : BaseDto
 {
-    public IEnumerable<Message> Messages { get; set; } = new List<Message>();
+    public List<ChatMessage> Messages { get; set; } = new();
+    //public IEnumerable<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
 }
 
 

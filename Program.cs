@@ -1,15 +1,15 @@
  using System.Reflection;
  using Fleck;
- using helloworld.core;
- using helloworld.Infrastructure;
- using helloworld.Services;
+ using chatty.core;
+ using chatty.Infrastructure;
+ using chatty.Services;
  using lib;
 
  var builder = WebApplication.CreateBuilder(args);
  
  // Use PostgreSQL with Dapper for working with data
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var  Uri = new Uri(connectionString);
+var  Uri = new Uri(connectionString ?? throw new InvalidOperationException());
 var usethis = string.Format(
          "Server={0};Database={1};User Id={2};Password={3};Port={4};Pooling=true;MaxPoolSize=3",
          Uri.Host,

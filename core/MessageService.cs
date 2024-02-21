@@ -1,6 +1,6 @@
-﻿using helloworld.Infrastructure;
+﻿using chatty.Infrastructure;
 
-namespace helloworld.core;
+namespace chatty.core;
 
 public class MessageService
 {
@@ -11,12 +11,12 @@ public class MessageService
         _messageRepository = messageRepository;
     }
     
-    public async Task<int> InsertMessage(string content, int room, string nickname)
+    public async Task<int> InsertMessage(string content, int room, string nickname, DateTime date)
     {
-       return await _messageRepository.InsertMessage(content, room, nickname);
+        return await _messageRepository.InsertMessage(content, room, nickname, date);
     }
     
-    public async Task<List<Message>> GetRecentMessages(int room)
+    public async Task<List<ChatMessage>> GetRecentMessages(int room)
     {
         return await _messageRepository.GetRecentMessages(room);
     }

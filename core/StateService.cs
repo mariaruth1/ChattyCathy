@@ -1,6 +1,9 @@
-﻿using Fleck;
+﻿using System.Text.Json;
+using chatty.ClientEvents;
+using chatty.Infrastructure;
+using Fleck;
 
-namespace helloworld.Services;
+namespace chatty.Services;
 
 public class WebSocketWrapper(IWebSocketConnection connection)
 {
@@ -26,8 +29,17 @@ public static class StateService
         }
         return Rooms[room].Add(ws.ConnectionInfo.Id);
     }
+    
+    public static bool RemoveFromRoom(IWebSocketConnection ws, int room)
+    {
+        if (Rooms.TryGetValue(room, out var guids))
+        {
+            return guids.Remove(ws.ConnectionInfo.Id);
+        }
+        return false;
+    }
 
-    public static void BroadcastToRoom(int room, string message)
+    public static void BroadcastToRoom(int room, ServerBroadcastsMessageToRoom message)
     {
        if (Rooms.TryGetValue(room, out var guids))
        {
@@ -35,7 +47,7 @@ public static class StateService
            {
                if (Connections.TryGetValue(guid, out var ws))
                {
-                   ws.Connection.Send(message);
+                   ws.Connection.Send(JsonSerializer.Serialize(message));
                }
            }
        }

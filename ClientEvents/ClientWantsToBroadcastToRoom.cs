@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
 using Fleck;
-using helloworld.core;
-using helloworld.Services;
+using chatty.core;
+using chatty.Services;
 using lib;
 
-namespace helloworld.ClientEvents;
+namespace chatty.ClientEvents;
 
 public class ClientWantsToBroadcastToRoomDto : BaseDto
 {
@@ -16,28 +16,33 @@ public class ClientWantsToBroadcastToRoom(MessageService messageService) : BaseE
 {
     public override async Task Handle(ClientWantsToBroadcastToRoomDto dto, IWebSocketConnection socket)
     {
+        var date = DateTime.Now;
         var success = await messageService.InsertMessage(dto.Message, dto.RoomId,
-            StateService.Connections[socket.ConnectionInfo.Id].Username) == 1;
+            StateService.Connections[socket.ConnectionInfo.Id].Username, date) == 1;
         if(!success)
         {
             throw new Exception("Failed to insert message.");
             return;
         }
 
-        var message = new ServerBroadcastsMessageWithUsername()
+        var message = new ServerBroadcastsMessageToRoom()
         {
             Message = dto.Message,
-            Username = StateService.Connections[socket.ConnectionInfo.Id].Username
+            Username = StateService.Connections[socket.ConnectionInfo.Id].Username,
+            Timestamp = date.ToShortTimeString(),
+            RoomId = dto.RoomId
         };
         
-        StateService.BroadcastToRoom(dto.RoomId, JsonSerializer.Serialize(message));
+        StateService.BroadcastToRoom(dto.RoomId, message);
     }
 }
 
-public class ServerBroadcastsMessageWithUsername : BaseDto
+public class ServerBroadcastsMessageToRoom : BaseDto
 {
     public string Message { get; set; }
     public string Username { get; set; }
+    public string Timestamp { get; set; }
+    public int RoomId { get; set; }
 }
 
 
