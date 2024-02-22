@@ -9,13 +9,13 @@ public class MessageRepository(NpgsqlDataSource db)
 
     //When you send a message,
     //you should insert the message into the database.
-    public async Task<int> InsertMessage(string content, int room, string nickname, DateTime date)
+    public async Task<ChatMessage?> InsertMessage(string content, int room, string nickname, DateTime date)
     {
-        var sql = @"INSERT INTO chatapp.message (""content"", ""room"", ""nickname"", ""timestamp"") VALUES (@content, @room, @nickname, @date)";
-        using (var conn = db.OpenConnection())
-        {
-            return await conn.ExecuteAsync(sql, new { content, room, nickname, date });
-        }
+        var sql = @"INSERT INTO chatapp.message (""content"", ""room"", ""nickname"", ""timestamp"") 
+VALUES (@content, @room, @nickname, @date) 
+RETURNING content AS Content, nickname AS Nickname, timestamp AS Timestamp";
+        await using var conn = db.OpenConnection();
+        return await conn.QueryFirstOrDefaultAsync<ChatMessage>(sql, new { content, room, nickname, date });
     }
     
     //When you enter a room,
@@ -35,7 +35,6 @@ public class MessageRepository(NpgsqlDataSource db)
 public class ChatMessage
 {
     public string Content { get; set; } = null!;
-    public int Room { get; set; }
     public string Nickname { get; set; } = null!;
-    public DateTime Timestamp { get; set; }
+    public string Timestamp { get; set; } = null!;
 }

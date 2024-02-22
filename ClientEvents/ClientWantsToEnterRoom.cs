@@ -18,17 +18,18 @@ public class ClientWantsToEnterRoom(MessageService messageService) : BaseEventHa
     {
         StateService.AddToRoom(socket, dto.RoomId);
         
-        await socket.Send(JsonSerializer.Serialize(new ServerAddsClientToRoom()
+        socket.SendDto(new ServerAddsClientToRoom()
         {
             Messages = await messageService.GetRecentMessages(dto.RoomId),
-        }));
+            Room = dto.RoomId
+        });
     }
 }
 
 public class ServerAddsClientToRoom : BaseDto
 {
-    public List<ChatMessage> Messages { get; set; } = new();
-    //public IEnumerable<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
+    public IEnumerable<ChatMessage> Messages { get; set; }  = null!;
+    public int Room { get; set; }
 }
 
 

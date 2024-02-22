@@ -23,7 +23,7 @@ public class ClientWantsToExitRoom: BaseEventHandler<ClientWantsToExitRoomDto>
             {
                 Message = $"{StateService.Connections[socket.ConnectionInfo.Id].Username} has left the room.",
                 Username = "Chatty Cathy",
-                Timestamp = DateTime.Now.ToShortTimeString()
+                Timestamp = DateTime.Now.ToString("o"),
             });
         return Task.CompletedTask;
     }

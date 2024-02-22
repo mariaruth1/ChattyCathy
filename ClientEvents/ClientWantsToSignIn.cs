@@ -6,7 +6,7 @@ namespace chatty.ClientEvents;
 
 public class ClientWantsToSignInDto : BaseDto
 {
-    public string Username { get; set; } = null!;
+    public string Username { get; set; } = "";
 }
 
 public class ClientWantsToSignIn : BaseEventHandler<ClientWantsToSignInDto>
@@ -16,7 +16,7 @@ public class ClientWantsToSignIn : BaseEventHandler<ClientWantsToSignInDto>
         StateService.Connections[socket.ConnectionInfo.Id].Username = dto.Username;
         socket.SendDto(new ServerConfirmsSignIn
         {
-            Message = dto.Username + " has signed in."
+            Username = dto.Username
         });
         return Task.CompletedTask;
     }
@@ -24,5 +24,5 @@ public class ClientWantsToSignIn : BaseEventHandler<ClientWantsToSignInDto>
 
 public class ServerConfirmsSignIn : BaseDto
 {
-    public string Message { get; set; } = null!;
+    public string Username { get; set; } = "";
 }

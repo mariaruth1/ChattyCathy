@@ -11,7 +11,7 @@ public class MessageService
         _messageRepository = messageRepository;
     }
     
-    public async Task<int> InsertMessage(string content, int room, string nickname, DateTime date)
+    public async Task<ChatMessage?> InsertMessage(string content, int room, string nickname, DateTime date)
     {
         return await _messageRepository.InsertMessage(content, room, nickname, date);
     }

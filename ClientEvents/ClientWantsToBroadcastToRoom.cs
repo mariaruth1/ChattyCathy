@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Fleck;
 using chatty.core;
+using chatty.Infrastructure;
 using chatty.Services;
 using lib;
 
@@ -17,21 +18,28 @@ public class ClientWantsToBroadcastToRoom(MessageService messageService) : BaseE
     public override async Task Handle(ClientWantsToBroadcastToRoomDto dto, IWebSocketConnection socket)
     {
         var date = DateTime.Now;
-        var success = await messageService.InsertMessage(dto.Message, dto.RoomId,
-            StateService.Connections[socket.ConnectionInfo.Id].Username, date) == 1;
-        if(!success)
+        var insertedMessage = new ChatMessage();
+        try
+        {
+            insertedMessage = await messageService.InsertMessage(dto.Message, dto.RoomId,
+                StateService.Connections[socket.ConnectionInfo.Id].Username, date);
+        }
+        catch (Exception)
         {
             throw new Exception("Failed to insert message.");
-            return;
         }
 
-        var message = new ServerBroadcastsMessageToRoom()
+        var message = new ServerBroadcastsMessageToRoom();
+        if (insertedMessage != null)
         {
-            Message = dto.Message,
-            Username = StateService.Connections[socket.ConnectionInfo.Id].Username,
-            Timestamp = date.ToShortTimeString(),
-            RoomId = dto.RoomId
-        };
+            message = new ServerBroadcastsMessageToRoom()
+            {
+                Message = insertedMessage.Content,
+                Username = insertedMessage.Nickname,
+                Timestamp = insertedMessage.Timestamp,
+                RoomId = dto.RoomId
+            };
+        }
         
         StateService.BroadcastToRoom(dto.RoomId, message);
     }
