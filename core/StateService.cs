@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using chatty.ClientEvents;
 using chatty.Infrastructure;
 using Fleck;
@@ -8,6 +9,7 @@ namespace chatty.Services;
 public class WebSocketWrapper(IWebSocketConnection connection)
 {
     public IWebSocketConnection Connection { get; set; } = connection;
+    [MinLength(3)]
     public string Username { get; set; } = "";
 }
 

@@ -37,7 +37,7 @@ public class ClientWantsToBroadcastToRoom(MessageService messageService) : BaseE
                 Message = insertedMessage.Content,
                 Username = insertedMessage.Nickname,
                 Timestamp = insertedMessage.Timestamp,
-                RoomId = dto.RoomId
+                //RoomId = dto.RoomId
             };
         }
         
@@ -50,7 +50,7 @@ public class ServerBroadcastsMessageToRoom : BaseDto
     public string Message { get; set; }
     public string Username { get; set; }
     public string Timestamp { get; set; }
-    public int RoomId { get; set; }
+    
 }
 
 

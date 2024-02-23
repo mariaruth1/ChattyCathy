@@ -14,6 +14,8 @@ public class ClientWantsToExitRoom: BaseEventHandler<ClientWantsToExitRoomDto>
 {
     public override Task Handle(ClientWantsToExitRoomDto dto, IWebSocketConnection socket)
     {
+        //TODO and variable for loggedoutuser
+        
         StateService.RemoveFromRoom(socket, dto.Room);
         socket.SendDto(new ServerConfirmsExitRoom
         {
