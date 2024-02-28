@@ -18,7 +18,7 @@ public class ClientWantsToSignIn : BaseEventHandler<ClientWantsToSignInDto>
 {
     public override Task Handle(ClientWantsToSignInDto dto, IWebSocketConnection socket)
     {
-        if(StateService.Connections[socket.ConnectionInfo.Id].Username.Length >= 3)
+        if(dto.Username.Length <3)
         {
             throw new InvalidUsernameException("Username is invalid.");
         }
